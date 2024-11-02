@@ -27,6 +27,7 @@ app = FastAPI()
 load_dotenv()
 line_bot_api = LineBotApi(os.environ["LINE_CHANNEL_ACCESS_TOKEN"])
 handler = WebhookHandler(os.environ["LINE_CHANNEL_SECRET"])
+search_api_url = os.environ["SEARCH_API_URL"]
 
 condition_list = ["絶好調", "普通", "疲れている"]
 genre_list = ["アウトドア", "スポーツ", "ものづくり", "アート", "自然", "歴史", "公園"]
@@ -106,7 +107,6 @@ def handle_message(event):
 
 
 def recommend_place_pages():
-    url = "https://410b-111-108-11-74.ngrok-free.app/sense"
     data = {
         "keyword": user_info["genre"],
         "sense": user_info["sense"],
@@ -114,13 +114,12 @@ def recommend_place_pages():
         "lng": user_info["user_longitude"],
         "dist": 20.0,
     }
-    responses = send_to_search_api(url, data)
-    print(responses)
+    responses = send_to_search_api(search_api_url, data)
     columns = [
         CarouselColumn(
             thumbnail_image_url=response["image_url"],
             title=response["名称"],
-            text=response["説明"],
+            text=response["要約"],
             actions=[URIAction(label="詳細を見る", uri=response["page_url"])],
         )
         for response in responses
