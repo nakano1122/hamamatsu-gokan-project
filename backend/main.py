@@ -59,9 +59,7 @@ async def linebot(
 
 # APIにリクエストを送ってデータを取得する
 def send_to_search_api(url: str, data: dict) -> dict:
-    print(data)
     response = httpx.post(url, json=data)
-    print(response)
     return response.json()
 
 
@@ -119,7 +117,7 @@ def recommend_place_pages():
         CarouselColumn(
             thumbnail_image_url=response["image_url"],
             title=response["名称"],
-            text=response["要約"],
+            text=f'{response["要約"]}\n{response["smile"]}スマイル',
             actions=[URIAction(label="詳細を見る", uri=response["page_url"])],
         )
         for response in responses
